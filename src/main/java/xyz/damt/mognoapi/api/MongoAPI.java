@@ -53,8 +53,8 @@ public class MongoAPI {
 
         try {
             com.mongodb.client.MongoClient client = MongoClients.create(url);
-            MongoDatabase db = client.getDatabase(database);
-            collection = db.getCollection(collectionName);
+            mongoDatabase = client.getDatabase(database);
+            collection = mongoDatabase.getCollection(collectionName);
             Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "The MongoDB database has connected!");
         } catch (Exception e) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "There was an error connecting to the MongoDatabase and that is: ");
@@ -71,7 +71,7 @@ public class MongoAPI {
         return filter;
     }
 
-    public void updateDocument(Document document, String key, Object value, CommandSender sender) {
+    public void updateDocument(Document document, String key, Object value) {
         if (document != null) {
             Bson updatedValue = new Document(key, value);
             Bson updateOperation = new Document("$set", updatedValue);
@@ -80,6 +80,13 @@ public class MongoAPI {
             return;
         }
 
+    }
+
+    public void createCollection(String collectionName) {
+        if (mongoDatabase.getCollection(collectionName) != null) {
+            return;
+        }
+        mongoDatabase.createCollection(collectionName);
     }
 
     public void createDocument(String key, String value) {
